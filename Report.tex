@@ -4,7 +4,7 @@ Over the past few years, cycling has become an increasingly popular mode of tran
 
 The switch from motor vehicles towards bicycles is likely to continue, partly due to the increasing cost of the other methods of travelling. Petrol prices have risen by approximately 20$\%$ since the beginning of the year, reaching a peak at 190p per litre on 30 June \cite{petrol}. With the ongoing energy crisis, cycling is becoming a more cost-efficient way to travel. Its status as a greener alternative to motor vehicles is another reason many travellers are receptive towards cycling. A standard bicycle's carbon footprint is about 25-35g carbon dioxide equivalent per kilometre (CO$_2$e/km) \cite{cycleco2}, while a typical car's emissions come up to about 220g CO$_2$e/km \cite{carco2}. 
 
-Because of the many benefits of cycling, Transport for London (TfL) is looking to support the increased demand and promote the usage of bicycles to the wider public in London via a bike sharing scheme. Therefore, 
+Because of the many benefits of cycling, Transport for London (TfL) is looking to support the increased demand and promote the usage of bicycles to the wider public in London via a bike sharing scheme. 
 
 
 \section{Objective}
@@ -19,9 +19,7 @@ To approximate the demand, we will be using bike hire data between 2011 and 2012
 
 \section{Data Exploration}
 % As a good data scientist, you should know your data well. Aspects of this data might be relevant for your analysis, and you might therefore want to describe these (potentially together with the use of figures).
-There are two datasets provided: \texttt{hour.csv} and \texttt{day.csv}. The former is the more granular dataset, hence was used for data exploration.
-
-Given that the brief specifies an analysis for the \textit{Summer} and \textit{Spring} seasons only, the visualisations that follow also only show data for these seasons. Non-working days are excluded during pre-processing as we will focus on demand from commuters.
+There are two datasets provided: \texttt{hour.csv} and \texttt{day.csv}. They contain the bike hire counts per hour and per day respectively. The former is the more granular dataset, hence was used for data exploration. Given that the brief specifies an analysis for the \textit{Summer} and \textit{Spring} seasons only, the visualisations that follow also only show data for these seasons. Non-working days are excluded during pre-processing as we will focus on demand from commuters.
 
 \begin{comment}
 The figure below shows the total bike rental by hour for the \textit{Spring} season across \textit{workingday} on the vertical axis and split by \textit{year}
@@ -37,140 +35,165 @@ From the previous two figures, there is a common general trend for both years of
 
 \begin{figure}[h]
 
-\begin{subfigure}{0.49\textwidth}
-\includegraphics[height=6cm]{images/2011spring.jpg} 
+\begin{subfigure}{0.225\textwidth}
+\includegraphics[height=3.1cm, left]{images/2011spring.jpg} 
 
 \label{fig:subim2.1}
 \end{subfigure}
-\begin{subfigure}{0.49\textwidth}
-\includegraphics[height=6cm]{images/2011summer.jpg}
+\begin{subfigure}{0.225\textwidth}
+\includegraphics[height=3.1cm, left]{images/2012spring.jpg}
 
 \label{fig:subim2.2}
 \end{subfigure}
-\begin{subfigure}{0.49\textwidth}
-\includegraphics[height=6cm]{images/2012spring.jpg} 
+\begin{subfigure}{0.225\textwidth}
+\includegraphics[height=3.1cm, left]{images/2011summer.jpg} 
 
 \label{fig:subim2.3}
 \end{subfigure}
-\begin{subfigure}{0.49\textwidth}
-\includegraphics[height=6cm]{images/2012summer.jpg}
+\begin{subfigure}{0.225\textwidth}
+\includegraphics[height=3.1cm, left]{images/2012summer.jpg}
 
 \label{fig:subim2.4}
 \end{subfigure}
-\caption{Histograms of the Number of Rented Bikes for Spring 2011, Summer 2011, Spring 2012 and Summer 2012}
+\caption{Histograms of Number of Rented Bikes for Spring ($2011 \& 2012$), and Summer ($2011 \& 2012$)}
 \label{fig:image2}
 \end{figure}
 
-In order to have a view of the distribution of the Number of Rented Bikes for both the \textit{Spring} and \textit{Summer} seasons, a histogram for their respective data are produced in Figure 1.
+In order to visualize the distribution of the Number of Rented Bikes for both the \textit{Spring} and \textit{Summer} seasons, a histogram for their respective data are produced in Figure \ref{fig:image2}. It can be observed that there is a larger range of hourly counts in 2012 than 2011 for both seasons, hence we will be performing tests on the data from the two years separately.
 
-For the following analysis of evening rental bike numbers, the data during peak commuting times from $16:00$ to $21:00$ on working days are chosen and split into \textit{Spring} and \textit{Summer}.
+For the following analyses, each dataset will be split into 4 subsets: Spring 2011, Spring 2012, Summer 2011 and Summer 2012.
 
 \section{Goodness-of-fit tests}
 % Description of the hypothesis being tested, test statistic, distribution under the null, conclusion of the tests, etc. This would also discuss any assumptions required for the test, and a comparison of the different tests used. It could also include any conclusion of these tests and the insights these result give you.
-In this section, we will be applying goodness-of-fit hypothesis tests to understand if the bike hire counts during peak commuting hours follow normal distributions. Let $X_i(i=1,...,n)$ be the number of bike hires. Assume that $X_i$ is independent and identically distributed (i.i.d) and also continuous. It randomly draws from the population.
-
-\paragraph{Hypothesis:} ~\\
+In this section, we will be applying goodness-of-fit hypothesis tests to understand if the bike hire counts during peak commuting hours follow normal distributions. The peak commuting hours are defined to be from $16:00$ to $21:00$ on working days. Let $X_i(i=1,...,n)$, where n = \textbf{FILL IN}, be the number of bike hires per hour, as obtained from the \texttt{hours.csv}. Assume that $X_i$ are independent and identically distributed (i.i.d) and also continuous. It randomly draws from the population. \\
+\textbf{Hypothesis:} \\
 Null hypothesis $H_0$: Bike hires are normally distributed. $X_i\sim Normal$ \\
 Alternative hypothesis $H_1$: Bike hires are not normally distributed.
-
-\subsection{Shapiro Test}
-The Shapiro-Wilk test is one of the tests we used to check normality. We chose this test as it has been found to show the best power for a given significance \cite{shapiropower}. The Shapiro-Wilk test calculates a test statistic W which is given by: \\
+\subsection{Shapiro-Wilk Test}
+The Shapiro-Wilk test is one of the tests we used to check normality. We chose this test as it has been found to show the best power for a given significance \cite{shapiropower}. The Shapiro-Wilk test calculates a test statistic $W$ which is given by: \\
 \begin{eqnarray}
-\ W = \frac{\left(\sum_{i=1}^{n} a_i x(i)\right)^2}{(\sum_{i=1}^{n} (x_i-\bar{x}))^2},
+\ W = \frac{\left(\sum_{i=1}^{n} a_i x_{(i)}\right)^2}{(\sum_{i=1}^{n} (x_i-\bar{x}))^2},
 \end{eqnarray}
 
-where $x_{i}$ are the ordered sample values, $a_i$ are constants found from means, variances and covariances of the order statistic of a $n$ sized sample taken from a normal distribution and $\bar{x}$ is the sample mean. As $n$ tends to infinity $W$ tends to a value of 1.  
+where $x_{(i)}$ are the ordered sample values from smallest to largest and $\bar{x}$ is the sample mean. $a_i$ are constants found from means and covariance matrices of the expected values of $n$ ordered samples from the standard normal distribution . As $n$ tends to infinity $W$ tends to a value of 1.  
 
-\paragraph{Results:} ~\\
+If the sample is large then the Shapiro-Wilk test may detect trivial departures from normality due to $W$ being extremely sensitive to outliers. This means a sample that is normally distributed could potentially produce a significant $p-value$. Although this departure may be statistically significant, it may not be practically. \textbf{TO BE UPDATED DEPENDNG ON WHETHER WE CAN FIT IN A QQ-PLOT} We overcome this issue by visually analysing the data in a Q-Q plot later on in the report. \\
+\textbf{Results:} ~\\
 Spring 2011: Test statistic $W=0.9679$ and $p-value = 1.815\times10^{-7}$ \\
 Summer 2011: Test statistic $W= 0.9553$ and $p-value = 1.341\times10^{-9}$ \\
 Spring 2012: Test statistic $W=0.9681$ and $p-value = 1.815\times10^{-7}$ \\
 Summer 2012: Test statistic $W= 0.9449$ and $p-value = 3.151\times10^{-10}$
 
-\paragraph{Problems with the test:} ~\\
-If the sample is large then the Shapiro-Wilk test may detect trivial departures from normality due to $W$ being extremely sensitive to outliers.This means a sample that is normally distributed could potentially produce a p-value less than 0.05. Although this departure may be statistically significant in may not be practically. We overcome this issue by visually analysing the data in a Q-Q plot later on in the report.  
 
 \subsection{Kolmogorov-Smirnov Test}
 
-Kolmogorov–Smirnov test is a nonparametric test to compare a sample with a null distribution based on the empirical distribution function of the sample \cite{berger2014kolmogorov}. The Kolmogorov–Smirnov statistic $D_n$ is:
+The Kolmogorov–Smirnov test is a nonparametric test that compare the empirical distribution function of the sample to a null distribution \cite{berger2014kolmogorov}. The Kolmogorov–Smirnov statistic $D_n$ is:
 \begin{eqnarray}
 \ D_n = \sup_{x} |F_n(x)-F(x)|
 \end{eqnarray}
-where $F_n(x)$ is the empirical distribution function for $n$ observations $X_i$ and $F(x)$ is the cumulative distribution function of null distribution, here is a normal distribution. $sup_{x}$ takes the largest absolute difference between $F_n(x)$ and $F(x)$ across all $X$ values.
+where $F_n(x)$ is the empirical distribution function for $n$ observations $X_i$ and $F(x)$ is the cumulative distribution function of null distribution, which here is a normal distribution. The supremum function $sup$ takes the largest absolute difference between $F_n(x)$ and $F(x)$ across all $X$ values.
 
-\paragraph{Result and Conclusion:} ~\\
-
+As ties are present in this dataset, asymptotic distributions will be used. The approximations are fairly accurate as $n$ is large. \\
+\textbf{Result and Conclusion:} \\
 Spring 2011: Test statistic $t=0.0711$ and $p-value = 0.03939$ \\
 Summer 2011: Test statistic $t=0.1080$ and $p-value = 0.00018$ \\
 Spring 2012: Test statistic $t=0.0711$ and $p-value = 0.01091$ \\
-Summer 2012: Test statistic $t=0.1080$ and $p-value = 0.00023$\\
-
-All p-values of Kolmogorov–Smirnov test in spring and summer of 2011 and 2012 are smaller than 0.05. It means that we need to reject the null hypothesis that the distribution of bike hires during peak commuting times in the evening in spring and summer is not normally distributed.
+Summer 2012: Test statistic $t=0.1080$ and $p-value = 0.00023$
  
 \subsection{Discussion}
-bonferroni correction
+We will reject the normality of bike hire counts at power $\alpha=00.5$. As two tests are performed for each season, we apply Bonferroni correction to the significance level to account for multiple testing. As such, a $p-value$ of $\frac{0.05}{2}=0.025$ is considered significant and provides evidence for rejecting the null hypothesis.
 
-final verdict
+For Spring, only the $p-value$ from K-S test for 2011 is not significant ($p-value = 0.03939$), while the other three tests produced significant $p-value$s. All four $p-values$ for Summer are significant.  From the overall evidence, we conclude that the bike demand during peak commuting hours in both Spring and Summer is not normally distributed.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\textbf{LIMITATIONS}
 
 \section{Two-sample tests}
-overview + preprocessing
+In this section, we will be testing whether the bike hire counts in Spring and Summer follow the same distribution. The dataset used here is \texttt{day.csv}. Two-sample tests will be applied to compare the counts from the Spring and Summer of 2011 and 2012 separately. 
+
+
+\subsection{Two Sample T-test with Unequal Variance}
+Two Sample T-test with unequal variance contributes to test whether the distribution of bike hires in spring and in summer are the same here. \\
+\textbf{Assumptions:} ~\\
+1. Data are continuous\\ 
+2. $Y_i, Y_j \sim Normal$ or $\bar{Y}$ is approximately normal when $n\ge 25$ to use CLT \\ 
+3. Two samples  $Y_{1j}$ and $Y_{2j}$  are independent\\ 
+4. Both samples are **simple random samples** from their populations
+\textbf{Analysis of assumptions:} ~\\ 
+1. **Question 1** The random variables here is natural numbers, it is not continuous, but $\bar{Y}$ can be assumed to be continuous\\
+2. Normality check:\\ \\
+\includegraphics{images/Allen333.png}\\
+The bike hire numbers in spring and summer do not seem to be normal distributions, because in all of the Q-Q Plots, the points are not on the straight line. But our sample size is definitely larger than 25, $\bar{Y}$ is approximately normal.\\
+3. **Question 2** It is assumed that the bike hires in spring and in summer are independent, though they may not be independent, because these data are actually time series. The management or scheme of the company on bike renting business can make the data correlated to their near data**. But no models are perfect, and the correlation should be small. \\
+4. It is assumed that the bike hires in spring and in summer have unequal variance. Because there is no evidence to indicate that their variances in population are equal. In fact, their variances are likely to be different, as the rainy days in spring, high temperature in summer or other confounding factors are likely to make variations on demand of bikes respectively.\\
+Thus, the analysis of the assumption indicates that we can use two sample T-test to test our hypothesis on given data from their population.\\
+\textbf{Hypothesis:} ~\\
+$H_0:$ The mean of bike hires in spring is equal to the mean of bike hires in summer\\
+$H_a:$ The mean of bike hires in spring is not equal to the mean of bike hires in summer\\
+\textbf{Test Statistic and its distribution:} ~\\
+$$T = \frac{\bar{y}_1-\bar{y}_2}{\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}}$$
+$$T \sim t\ (df = min\{n_1-1,n_2-1\})$$
+Notation: $s_1$ represents the sample variance of the bike hires in spring; $s_2$ represents the sample variance of the bike hires in summer\\
+\textbf{Summary of the results:} ~\\
+Confidence interval:
+$$In\ 2011:\ \ \ \ \  [420.5938,\ 1071.3664]$$
+$$In\ 2012:\ \ \ \ \  [535.1287,\ 1177.7275]$$
+There is 95 percent of chance that the confidence interval will cover the true mean difference. \\
+\textbf{Conclusion:} \\
+The test statistic for 2011 t = 3.4.5446, df = 107.42, p value = p-value = 1.449 e-05 = 0.00001449
+The test statistic for 2012 t = 5.2823, df = 110.23, p value = 6.485 e-07 = 0.0000006485
+
+Since we blocked data into 2011 and 2012, and we have one two sample t-test for each year, they should share the significance level. This is a multiple comparison test problem. So we use Bonferroni to help, then each test should have significance level $0.05/2$, 2 is the number of the tests. Thus each test have 0.025 significance level. The p values above suggest that we have trong evidence to reject the null hypothesis that the bike hires in spring is equal to the bike hires in summer. \\
+\textbf{Limitations:} ~\\
+1. We ignore the correlation of bike hires in spring and in summer. This means our results are based on the approximation, our results is not accurate but it should be close to the truth.
+2. Our purpose is to help with understanding the demand of bikes in spring and summer of London. However, the data is from bike hires of Washington DC. It has limited value to help understand the demand of London.
+3. There are only bike hires data for 2011 and 2012, so the data even may not be large enough or representative enough to truly reflect the demand of bikes in spring and summer of Washington DC.
+
+
 
 \subsection{Two-sample Kolmogrov-Smirnov Test}
-This test is the two-sample version of the KS test discussed under the goodness-of-fit tests. It assumes that the two samples being compared are independent of each other. 
-
-\paragraph{Hypothesis:} ~\\
+This test is the two-sample version of the K-S test discussed under the goodness-of-fit tests. It assumes that the two samples being compared are independent of each other. Instead of the mean, this test checks for the overall distribution of samples. However, its increased sensitivity to differences between the sample distributions reduces its power.\\
+\textbf{Hypothesis:} ~\\
 $H_0$: The distribution of bike hires in Spring is equal to the distribution of bike hires in Summer. \\
-$H_1$: The distribution of bike hires in Spring is not equal to the distribution of bike hires in Summer.
-
-\paragraph{Test Statistic:}
+$H_1$: The distribution of bike hires in Spring is not equal to the distribution of bike hires in Summer. \\
+\textbf{Test Statistic:}
+The K-S statistic is the largest absolute difference between the empirical cumulative distribution functions of the two samples across all $X$ values.
 \begin{eqnarray}
-\ D_n = \sup_{x} |F_{1,n}(x)-F_{2,m}(x)|
+\ D_{n,m} = \sup_{x} |F_{1,n}(x)-F_{2,m}(x)|
 \end{eqnarray}
-where $F_{1,n}(x)$ and $F_{2,m}(x)$ are the empirical distribution functions for counts from Spring and Summer respectively.
-
-\paragraph{Results:} ~\\
+where $F_{1,n}(x)$ and $F_{2,m}(x)$ are the empirical distribution functions for counts and $n$, $m$ are the number of days from Spring and Summer respectively. \\
+\textbf{Results:} ~\\
 2011: Test statistic D = 0.30556, p-value = 0.0004089 \\
 2012: Test statistic D = 0.30797, p-value = 0.0003573
 
-% not very powerful because it is devised to be sensitive against all possible types of differences between two distribution functions
+\subsection{Discussion}
+As with the goodness-of-fit tests, we apply the Bonferroni correction here to account for multiple testing. The $p-value$s for all the tests are below 0.025, so we conclude that the distribution of bike hire counts in Spring and Summer are not the same.
+
+\textbf{LIMITATIONS OF ASSUMPTIONS}
+
+\section{Conclusion}
+% How can your analysis benefit your client? What do you advise them to do? What are the limitation of your analysis?
+- ADVICE
+
+- LIMITATIONS
+
+1.data is from Boston, not London
+
+2. data is from 10 years ago
 
 
+
+
+- talks about peak commuting rentals
+- 
+
+\begin{comment}
+\section{Questions for TA session}
+- peak hours to be used for 2nd part analysis or general is good?
+- should we look for tests that do not assume independence
+- 
+
+
+    
 
 \subsection{Mann-Whitney U Test}
 
@@ -204,63 +227,4 @@ In R, we computed the value of the test statistic $W = 864$, which gives a p-val
 \paragraph{Issues}
 
 The main problem with performing this test on the given data is the assumption that the samples are independent. However, this may not be valid for the data observed, since they may be dependent.
-
-
-\subsection{Two Sample T-test with Unequal Variance}
-Two Sample T-test with unequal variance contributes to test whether the distribution of bike hires in spring and in summer are the same here.
-\paragraph{Assumptions:} ~\\
-1. Data are continuous\\ 
-2. $Y_i, Y_j \sim Normal$ or $\bar{Y}$ is approximately normal when $n\ge 25$ to use CLT \\ 
-3. Two samples  $Y_{1j}$ and $Y_{2j}$  are independent\\ 
-4. Both samples are **simple random samples** from their populations
-\paragraph{Analysis of assumptions:} ~\\ 
-1. **Question 1** The random variables here is natural numbers, it is not continuous, but $\bar{Y}$ can be assumed to be continuous\\
-2. Normality check:\\ \\
-\includegraphics{images/Allen333.png}\\
-The bike hire numbers in spring and summer do not seem to be normal distributions, because in all of the Q-Q Plots, the points are not on the straight line. But our sample size is definitely larger than 25, $\bar{Y}$ is approximately normal.\\
-3. **Question 2** It is assumed that the bike hires in spring and in summer are independent, though they may not be independent, because these data are actually time series. The management or scheme of the company on bike renting business can make the data correlated to their near data**. But no models are perfect, and the correlation should be small. \\
-4. It is assumed that the bike hires in spring and in summer have unequal variance. Because there is no evidence to indicate that their variances in population are equal. In fact, their variances are likely to be different, as the rainy days in spring, high temperature in summer or other confounding factors are likely to make variations on demand of bikes respectively.\\
-Thus, the analysis of the assumption indicates that we can use two sample T-test to test our hypothesis on given data from their population.\\
-\paragraph{Preprocess the data:} ~\\
-1. Block data by the year into 2011 and 2012. In 2011, split the data into Spring (season = 2) in 2011, Summer (season = 3) in 2011. In 2012, split the data into Spring (season = 2) in 2012, Summer (season = 3) in 2012\\
-2. Remove the data for holidays and weekends, because people don't work or go to school on holidays and weekends, there is no clearly defined peak commuting time on holidays and weekends. These data may make our data dirty or noisy.\\
-3. Exclude the data for days that have extreme weathers(Weathersit = 4 or temperature >= 35 or wind speed >= 60), because these data are highly affected by the confounding variables such as temperature, wind speed, etc.\\
-
-\paragraph{Hypothesis:} ~\\
-$H_0:$ The mean of bike hires in spring is equal to the mean of bike hires in summer\\
-$H_a:$ The mean of bike hires in spring is not equal to the mean of bike hires in summer
-\paragraph{Test Statistic and its distribution:} ~\\
-$$T = \frac{\bar{y}_1-\bar{y}_2}{\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}}$$
-$$T \sim t\ (df = min\{n_1-1,n_2-1\})$$
-Notation: $s_1$ represents the sample variance of the bike hires in spring; $s_2$ represents the sample variance of the bike hires in summer
-\paragraph{Summary of the results:} ~\\
-Confidence interval:
-$$In\ 2011:\ \ \ \ \  [420.5938,\ 1071.3664]$$
-$$In\ 2012:\ \ \ \ \  [535.1287,\ 1177.7275]$$
-There is 95 percent of chance that the confidence interval will cover the true mean difference. \\ \\
-Conclusion: \\
-The test statistic for 2011 t = 3.4.5446, df = 107.42, p value = p-value = 1.449 e-05 = 0.00001449
-The test statistic for 2012 t = 5.2823, df = 110.23, p value = 6.485 e-07 = 0.0000006485
-
-Since we blocked data into 2011 and 2012, and we have one two sample t-test for each year, they should share the significance level. This is a multiple comparison test problem. So we use Bonferroni to help, then each test should have significance level $0.05/2$, 2 is the number of the tests. Thus each test have 0.025 significance level. The p values above suggest that we have trong evidence to reject the null hypothesis that the bike hires in spring is equal to the bike hires in summer. 
-
-\paragraph{Limitations:} ~\\
-1. We ignore the correlation of bike hires in spring and in summer. This means our results are based on the approximation, our results is not accurate but it should be close to the truth.
-2. Our purpose is to help with understanding the demand of bikes in spring and summer of London. However, the data is from bike hires of Washington DC. It has limited value to help understand the demand of London.
-3. There are only bike hires data for 2011 and 2012, so the data even may not be large enough or representative enough to truly reflect the demand of bikes in spring and summer of Washington DC.
-
-
-\section{Conclusion}
-% How can your analysis benefit your client? What do you advise them to do? What are the limitation of your analysis?
-- talks about peak commuting rentals
-- 
-
-\section{Further Exploration}
-
-
-\section{Questions for TA session}
-- peak hours to be used for 2nd part analysis or general is good?
-- should we look for tests that do not assume independence
-- 
-
-
+\end{comment}
